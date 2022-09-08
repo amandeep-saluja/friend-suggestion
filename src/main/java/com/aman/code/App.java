@@ -1,9 +1,23 @@
 package com.aman.code;
 
-public class App 
+import com.aman.code.api.FriendService;
+import com.aman.code.api.FriendServiceImpl;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class App
 {
+    private static final Path attributeInfoFilePath = Paths.get("src/main/java/resources/AttributeInfo.csv");
+
+    private static final Path connectionsFilePath = Paths.get("src/main/java/resources/ExistingConnections.csv");
+
+    private static final Path personInfoFilePath = Paths.get("src/main/java/resources/MasterDataFeed.csv");
+
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        FriendService service = new FriendServiceImpl();
+        service.getSuggestions("P00001", 3, 4,
+                attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
     }
 }

@@ -40,30 +40,30 @@ public class FriendServiceTest {
     public void test1() {
         FriendService service = new FriendServiceImpl();
         List<Suggestion> result = service.getSuggestions("P00004", 4, 3, attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
-        Assert.assertTrue(result.get(0).getId().equals("P00001"));
-        Assert.assertTrue(result.size() == 1);
+        Assert.assertEquals("P00001", result.get(0).getId());
+        Assert.assertEquals(1, result.size());
     }
 
     @Test
     public void test2() {
         FriendService service = new FriendServiceImpl();
         List<Suggestion> result = service.getSuggestions("P00001", 4, 3, attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
-        Assert.assertTrue(result.get(0).getId().equals("P00005"));
-        Assert.assertTrue(result.get(1).getId().equals("P00004"));
+        Assert.assertEquals("P00005", result.get(0).getId());
+        Assert.assertEquals("P00004", result.get(1).getId());
     }
 
     @Test
     public void test3() {
         FriendService service = new FriendServiceImpl();
         List<Suggestion> result = service.getSuggestions("P00006", 4, 3, attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
-        Assert.assertTrue(result.size() == 0);
+        Assert.assertEquals(0, result.size());
     }
 
     @Test
     public void test4() {
         FriendService service = new FriendServiceImpl();
         List<Suggestion> result = service.getSuggestions("P00003", 4, 3, attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
-        Assert.assertTrue(result.get(0).getScore() == 20);
-        Assert.assertTrue(result.get(0).getName().equals("Johny Holmes"));
+        Assert.assertEquals(20, result.get(0).getScore());
+        Assert.assertEquals("Johny Holmes", result.get(0).getName());
     }
 }
