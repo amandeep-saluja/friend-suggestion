@@ -4,13 +4,13 @@ import java.util.List;
 
 public class Person {
     private String id;
-    private String fullName;
-    private String address;
+    private String fullName = "";
+    private String address = "";
     private Integer age;
     private List<String> cities;
     private List<String> schools;
     private List<String> colleges;
-    private String currentOrganization;
+    private String currentOrganization = "";
     private List<String> pastOrganizations;
     private List<String> interests;
 

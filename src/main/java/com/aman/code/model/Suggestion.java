@@ -14,6 +14,15 @@ public class Suggestion {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "Suggestion{" +
+                "id='" + id + '\'' +
+                ", score=" + score +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }
