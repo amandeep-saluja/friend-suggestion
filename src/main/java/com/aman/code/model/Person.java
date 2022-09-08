@@ -14,7 +14,9 @@ public class Person {
     private List<String> pastOrganizations;
     private List<String> interests;
 
-    public Person(String id, String fullName, String address, Integer age, List<String> cities, List<String> schools, List<String> colleges, String currentOrganization, List<String> pastOrganizations, List<String> interests) {
+    public Person(String id, String fullName, String address, Integer age,
+                  List<String> cities, List<String> schools, List<String> colleges,
+                  String currentOrganization, List<String> pastOrganizations, List<String> interests) {
         this.id = id;
         this.fullName = fullName;
         this.address = address;

@@ -17,7 +17,7 @@ public class App
     public static void main( String[] args )
     {
         FriendService service = new FriendServiceImpl();
-        service.getSuggestions("P00001", 3, 4,
+        service.getSuggestions("P00001", 4, 3,
                 attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
     }
 }
