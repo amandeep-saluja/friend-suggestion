@@ -19,7 +19,7 @@ public class App
     public static void main( String[] args )
     {
         FriendService service = new FriendServiceImpl();
-        List<Suggestion> suggestions = service.getSuggestions("P00004", 4, 3,
+        List<Suggestion> suggestions = service.getSuggestions("P00001", 4, 3,
                 attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
         System.out.println(suggestions);
     }

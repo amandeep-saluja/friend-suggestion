@@ -8,10 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DataLoadService {
@@ -80,12 +77,12 @@ public class DataLoadService {
                     String fullName = nextRecord[1];
                     String address = nextRecord[2];
                     Integer age = Integer.valueOf(nextRecord[3]);
-                    List<String> cities = Arrays.stream(nextRecord[4].split("^(\\|)*")).collect(Collectors.toList());
-                    List<String> schools = Arrays.stream(nextRecord[5].split("^(\\|)*")).collect(Collectors.toList());
-                    List<String> colleges = Arrays.stream(nextRecord[6].split("^(\\|)*")).collect(Collectors.toList());
+                    List<String> cities = extractList(nextRecord[4]);
+                    List<String> schools = extractList(nextRecord[5]);
+                    List<String> colleges = extractList(nextRecord[6]);
                     String currentOrg = nextRecord[7];
-                    List<String> pastOrgs = Arrays.stream(nextRecord[8].split("^(\\|)*")).collect(Collectors.toList());
-                    List<String> interests = Arrays.stream(nextRecord[9].split("^(\\|)*")).collect(Collectors.toList());
+                    List<String> pastOrgs = extractList(nextRecord[8]);
+                    List<String> interests = extractList(nextRecord[9]);
                     p = new Person(id, fullName, address, age, cities, schools, colleges, currentOrg, pastOrgs, interests);
                     break;
                 }
@@ -102,6 +99,14 @@ public class DataLoadService {
         return p;
     }
 
+    private static List<String> extractList(String key) {
+        String regex = "\\|";
+        List<String> list = Arrays.stream(key.split(regex)).collect(Collectors.toList());
+        list.removeIf(String::isEmpty);
+        list.removeIf(Objects::isNull);
+        return list;
+    }
+
     public static HashMap<String, LinkedList<String>> buildAllConnections(Path connectionsFilePath) throws IOException {
         HashMap<String, LinkedList<String>> connections = new HashMap<>();
         CSVReader csvReader=null;
@@ -113,15 +118,9 @@ public class DataLoadService {
             while ((nextRecord = csvReader.readNext()) != null) {
                 String key = nextRecord[0];
                 String value = nextRecord[1];
-                LinkedList<String> values;
-                if(connections.containsKey(key)) {
-                    values = connections.get(key);
-                }
-                else {
-                    values = new LinkedList<>();
-                }
-                values.push(value);
-                connections.put(key, values);
+
+                setConnection(connections, key, value);
+                setConnection(connections, value, key);
             }
         }
         catch (Exception e) {
@@ -134,5 +133,17 @@ public class DataLoadService {
         }
 
         return connections;
+    }
+
+    private static void setConnection(HashMap<String, LinkedList<String>> connections, String person, String friend) {
+        LinkedList<String> values;
+        if(connections.containsKey(person)) {
+            values = connections.get(person);
+        }
+        else {
+            values = new LinkedList<>();
+        }
+        values.push(friend);
+        connections.put(person, values);
     }
 }

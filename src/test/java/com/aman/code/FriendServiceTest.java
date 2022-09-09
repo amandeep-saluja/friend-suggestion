@@ -50,6 +50,7 @@ public class FriendServiceTest {
         List<Suggestion> result = service.getSuggestions("P00001", 4, 3, attributeInfoFilePath, connectionsFilePath, personInfoFilePath);
         Assert.assertEquals("P00005", result.get(0).getId());
         Assert.assertEquals("P00004", result.get(1).getId());
+        Assert.assertEquals("P00003", result.get(2).getId());
     }
 
     @Test

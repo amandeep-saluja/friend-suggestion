@@ -1,5 +1,6 @@
 package com.aman.code.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Person {
@@ -13,6 +14,29 @@ public class Person {
     private String currentOrganization = "";
     private List<String> pastOrganizations;
     private List<String> interests;
+
+    public Person(Person person) {
+        this.id = person.getId();
+        this.fullName = person.getFullName();
+        this.address = person.getAddress();
+        this.age = person.getAge();
+        this.cities = new ArrayList<>();
+        this.cities.addAll(person.getCities());
+
+        this.schools = new ArrayList<>();
+        this.schools.addAll(person.getSchools());
+
+        this.colleges = new ArrayList<>();
+        this.colleges.addAll(person.getColleges());
+
+        this.currentOrganization = person.getCurrentOrganization();
+
+        this.pastOrganizations = new ArrayList<>();
+        this.pastOrganizations.addAll(person.getPastOrganizations());
+
+        this.interests = new ArrayList<>();
+        this.interests.addAll(person.getInterests());
+    }
 
     public Person(String id, String fullName, String address, Integer age,
                   List<String> cities, List<String> schools, List<String> colleges,
