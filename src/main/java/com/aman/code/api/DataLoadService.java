@@ -75,8 +75,8 @@ public class DataLoadService {
                 String personId = nextRecord[0];
                 if(id.equals(personId)) {
                     String fullName = nextRecord[1];
-                    String address = nextRecord[2];
-                    Integer age = Integer.valueOf(nextRecord[3]);
+                    Integer age = Integer.valueOf(nextRecord[2]);
+                    String address = nextRecord[3];
                     List<String> cities = extractList(nextRecord[4]);
                     List<String> schools = extractList(nextRecord[5]);
                     List<String> colleges = extractList(nextRecord[6]);

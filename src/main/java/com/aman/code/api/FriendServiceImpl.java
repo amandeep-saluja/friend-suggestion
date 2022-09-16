@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,28 +23,48 @@ public class FriendServiceImpl implements FriendService {
                                            Path existingConnectionsFilePath,
                                            Path masterDataFeedFilePath) {
         try {
+            System.out.println("\nStart building connections");
+            Instant start = Instant.now();
             //map will contain all the connections
             HashMap<String, LinkedList<String>> connections = buildAllConnections(existingConnectionsFilePath);
-//            System.out.println("Connections: "+connections);
+            System.out.println("Connections build successfully " + connections.size());
+            /*System.out.println("Connections: " + connections);*/
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMillis() + " milli sec");
 
             // iterate over the n degree connections to collect all the friends
             Set<String> potentialSuggestions = new HashSet<>();
+            start = Instant.now();
+            System.out.println("\nFinding potential suggestions");
             buildPotentialSuggestions(id, connections, maxConnectionDegree, potentialSuggestions);
+            System.out.println("Potential suggestions build: " + potentialSuggestions.size());
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMinutes() + " minutes");
 
-//            System.out.println("Potential suggestions: "+potentialSuggestions);
-
+            start = Instant.now();
+            System.out.println("\nBuilding Ignore list");
             List<String> ignoreList = new ArrayList<>(connections.get(id));
             ignoreList.add(id);
+            System.out.println("Ignore list: " + ignoreList);
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMillis() + " milli sec");
 
-//            System.out.println("Ignore list: "+ignoreList);
-
+            start = Instant.now();
+            System.out.println("\nRemoving ignore list from potential suggestions");
             ignoreList.forEach(potentialSuggestions::remove);
+            System.out.println("Final potential list of " + potentialSuggestions.size() + " is " + potentialSuggestions);
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMillis() + " milli sec");
 
-//            System.out.println("Potential suggestions: "+potentialSuggestions);
-
+            start = Instant.now();
+            System.out.println("\nLoading score factors");
             HashMap<String, Integer> scoreFactors = loadScoreFactor(attributeInfoFilePath);
+            System.out.println("Score factors build " + scoreFactors);
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMinutes() + " milli sec");
 
-            return prepareSuggestions(potentialSuggestions, scoreFactors, maxSuggestions, masterDataFeedFilePath, id);
+            start = Instant.now();
+            System.out.println("\nStarting processing final potential suggestions by score factors");
+            List<Suggestion> suggestions = prepareSuggestions(potentialSuggestions, scoreFactors, maxSuggestions, masterDataFeedFilePath, id);
+            System.out.println("Suggestions build successfully: " + suggestions.size());
+            System.out.println("Time taken: " + Duration.between(start, Instant.now()).toMinutes() + " minutes");
+
+            return suggestions;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +80,7 @@ public class FriendServiceImpl implements FriendService {
         //queue to store the top k suggestions
         Queue<Suggestion> minHeap = new PriorityQueue<>(maxSuggestions, (s1, s2) -> {
             int diff = s2.getScore() - s1.getScore();
-            if(diff==0){
+            if (diff == 0) {
                 return s1.getName().compareTo(s2.getName());
             }
             return diff;
@@ -76,8 +98,8 @@ public class FriendServiceImpl implements FriendService {
                 String key = nextRecord[0];
                 if (potentialSuggestions.contains(key)) {
                     String fullName = nextRecord[1];
-                    String address = nextRecord[2];
-                    Integer age = Integer.valueOf(nextRecord[3]);
+                    Integer age = Integer.valueOf(nextRecord[2]);
+                    String address = nextRecord[3];
                     List<String> cities = extractList(nextRecord[4]);
                     List<String> schools = extractList(nextRecord[5]);
                     List<String> colleges = extractList(nextRecord[6]);
@@ -103,7 +125,7 @@ public class FriendServiceImpl implements FriendService {
             }
         }
         List<Suggestion> suggestionList = new ArrayList<>();
-        while(!minHeap.isEmpty()) {
+        while (!minHeap.isEmpty()) {
             suggestionList.add(minHeap.peek());
             minHeap.poll();
         }
@@ -128,35 +150,35 @@ public class FriendServiceImpl implements FriendService {
 
         if (null != primary.getSchools()) {
             primary.getSchools().retainAll(secondary.getSchools());
-            if(primary.getSchools().size()>0) {
+            if (primary.getSchools().size() > 0) {
                 finalScore += scoreFactors.get(SCHOOL);
             }
         }
 
         if (null != primary.getInterests()) {
             primary.getInterests().retainAll(secondary.getInterests());
-            if(primary.getInterests().size()>0) {
+            if (primary.getInterests().size() > 0) {
                 finalScore += scoreFactors.get(INTERESTS);
             }
         }
 
         if (null != primary.getCities()) {
             primary.getCities().retainAll(secondary.getCities());
-            if(primary.getCities().size()>0) {
+            if (primary.getCities().size() > 0) {
                 finalScore += scoreFactors.get(CITY);
             }
         }
 
         if (null != primary.getColleges()) {
             primary.getColleges().retainAll(secondary.getColleges());
-            if(primary.getColleges().size()>0) {
+            if (primary.getColleges().size() > 0) {
                 finalScore += scoreFactors.get(COLLEGE);
             }
         }
 
         if (null != primary.getPastOrganizations()) {
             primary.getPastOrganizations().retainAll(secondary.getPastOrganizations());
-            if(primary.getPastOrganizations().size()>0) {
+            if (primary.getPastOrganizations().size() > 0) {
                 finalScore += scoreFactors.get(PAST_ORGANIZATION);
             }
         }
